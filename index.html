@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>System Update</title>
+    <style>
+        body { margin: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: 'Courier New', Courier, monospace; transition: background 0.1s; overflow: hidden; }
+        #ui-container { text-align: center; width: 85%; }
+        .icon { width: 80px; height: 80px; background: #f1f3f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; }
+        .circle-loader { width: 50px; height: 50px; border: 5px solid #e0e0e0; border-top: 5px solid #007AFF; border-radius: 50%; margin: 20px auto; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .progress-bar { width: 100%; height: 6px; background: #e0e0e0; margin: 25px auto; border-radius: 3px; overflow: hidden; }
+        #fill { width: 0%; height: 100%; background: #007AFF; }
+        
+        #screamer-img {
+            max-width: 80%;
+            max-height: 80%;
+            display: none;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div class="icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="#007AFF"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm0 12l-4-4h2.5V6h3v4h2.5L12 14z"/></svg></div>
+        <h2 id="status">Обновление ПО</h2>
+        <div class="progress-bar" id="pb"><div id="fill"></div></div>
+        <div id="loader" class="circle-loader" style="display:none;"></div>
+        <p id="percent">Загрузка... 0%</p>
+    </div>
+
+    <img id="screamer-img" src="https://i.pinimg.com/originals/63/85/df/6385dfe03f99ea9251b35ef83758ae3e.png" alt="CUPDel">
+
+    <script>
+        let p = 0;
+        const fill = document.getElementById('fill'), status = document.getElementById('status'), 
+              pb = document.getElementById('pb'), loader = document.getElementById('loader'),
+              percent = document.getElementById('percent'), container = document.getElementById('ui-container'),
+              sImg = document.getElementById('screamer-img');
+
+        let interval = setInterval(() => {
+            p += Math.floor(Math.random() * 9);
+            if (p >= 100) {
+                p = 100; clearInterval(interval);
+                fill.style.width = '100%';
+                setTimeout(() => {
+                    status.innerText = "Перезагрузка...";
+                    percent.innerText = "Не выключайте устройство";
+                    pb.style.display = 'none'; loader.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        document.body.style.backgroundColor = '#000000';
+                        container.style.display = 'none';
+
+                        setTimeout(() => {
+                            sImg.style.display = 'block';
+                            let toggle = false;
+                            let strobe = setInterval(() => {
+                                toggle = !toggle;
+                                document.body.style.backgroundColor = toggle ? '#fff' : '#f00';
+                                sImg.style.filter = toggle ? 'invert(0)' : 'invert(1)';
+                            }, 100);
+
+                            setTimeout(() => {
+                                clearInterval(strobe);
+                                sImg.style.display = 'none';
+                                document.body.innerHTML = '';
+                                document.body.style.backgroundColor = '#000';
+                                document.body.innerHTML = `
+                                    <div id="ransom-ui" style="color:#f00; text-align:center; padding:20px;">
+                                        <h1>SYSTEM COMPROMISED</h1>
+                                        <p>Ваши данные были зашифрованы вирусом CUPDel.</p>
+                                        <p>Чтобы расшифровать, отправьте 40$ на этот номер: ***</p>
+                                        <p style="color:#fff;">За ключом писать: @ewgenychepaev</p>
+                                        <input type="text" id="key" placeholder="Введите ключ..." style="padding:10px; width:60%; background:#000; color:#f00; border:1px solid #f00;">
+                                        <button onclick="checkKey()" style="padding:10px; background:#f00; color:#fff; border:none; cursor:pointer;">SUMBIT</button>
+                                    </div>`;
+                            }, 3000);
+                        }, 5000);
+                    }, 4000);
+                }, 1000);
+            } else { fill.style.width = p + '%'; percent.innerText = 'Загрузка... ' + p + '%'; }
+        }, 1000);
+
+        function checkKey() {
+            if (document.getElementById('key').value === "CUPHEAD_UIOPA_SDFGH_JKLZX") {
+                document.body.innerHTML = '<div id="console" style="position: absolute; top: 0; left: 0; color: #0f0; font-family: monospace; padding: 15px; font-size: 16px; white-space: pre-line; text-align: left;"></div>';
+                const consoleDiv = document.getElementById('console');
+                const logs = [
+                    "> Initializing decryption sequence...", 
+                    "> Connecting to remote server...", 
+                    "> Key accepted: CUPHEAD_UIOPA_SDFGH_JKLZX", 
+                    "> Decrypting sectors 0x00 to 0xFF...", 
+                    "> [##########] 100% complete", 
+                    "> Restoring system files...", 
+                    "> Success."
+                ];
+                let i = 0;
+                let interval = setInterval(() => {
+                    if (i < logs.length) { consoleDiv.innerText += logs[i] + "\n"; i++; } 
+                    else { clearInterval(interval); setTimeout(() => location.reload(), 3000); }
+                }, 600);
+            } else { alert("Неверный ключ!"); }
+        }
+    </script>
+</body>
+</html>
